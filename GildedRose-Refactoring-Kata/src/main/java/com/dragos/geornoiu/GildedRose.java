@@ -7,14 +7,38 @@ public class GildedRose {
         this.items = items;
     }
 
-    public void updateQuality() {
+    public void updateItemQuality() {
         for (Item item : items) {
             if (isSulfurasItem(item)) {
                 continue;
             }
 
+            updateItemQuality(item);
+            decreaseSellByDays(item);
+            processExpiredItem(item);
+        }
+    }
+
+    private static boolean isSulfurasItem(Item item) {
+        return item.name.startsWith("Sulfuras");
+    }
+
+    private static void updateItemQuality(Item item) {
+        if (isBackstagePass(item)) {
+            increaseBackstagePassQuality(item);
+        } else if (isAgedBrie(item)) {
+            increaseItemQuality(item);
+        } else if (isConjuredItem(item)) {
+            decreaseItemQuality(item, 2);
+        } else {
+            decreaseItemQuality(item);
+        }
+    }
+
+    private static void processExpiredItem(Item item) {
+        if (hasItemSellByDatePass(item)) {
             if (isBackstagePass(item)) {
-                increaseBackstagePassQuality(item);
+                item.quality = 0;
             } else if (isAgedBrie(item)) {
                 increaseItemQuality(item);
             } else if (isConjuredItem(item)) {
@@ -22,24 +46,7 @@ public class GildedRose {
             } else {
                 decreaseItemQuality(item);
             }
-
-            decreaseSellByDays(item);
-            if (hasItemSellByDatePass(item)) {
-                if (isBackstagePass(item)) {
-                    item.quality = 0;
-                } else if (isAgedBrie(item)) {
-                    increaseItemQuality(item);
-                } else if (isConjuredItem(item)) {
-                    decreaseItemQuality(item, 2);
-                } else {
-                    decreaseItemQuality(item);
-                }
-            }
         }
-    }
-
-    private static boolean isSulfurasItem(Item item) {
-        return item.name.startsWith("Sulfuras");
     }
 
     private static boolean isBackstagePass(Item item) {
@@ -64,13 +71,21 @@ public class GildedRose {
     }
 
     private static void increaseBackstagePassQuality(Item item) {
-        if (item.sellIn < 6) {
+        if (isBackstagePassSellByDateLessThan6Days(item)) {
             increaseItemQuality(item, 3);
-        } else if (item.sellIn < 11) {
+        } else if (isBackstagePassSellByDateLessThan11Days(item)) {
             increaseItemQuality(item, 2);
         } else {
             increaseItemQuality(item);
         }
+    }
+
+    private static boolean isBackstagePassSellByDateLessThan11Days(Item item) {
+        return item.sellIn < 11;
+    }
+
+    private static boolean isBackstagePassSellByDateLessThan6Days(Item item) {
+        return item.sellIn < 6;
     }
 
     private static boolean isAgedBrie(Item item) {
