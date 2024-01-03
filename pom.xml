@@ -9,6 +9,7 @@
 
   <modules>
     <module>GildedRose-Refactoring-Kata</module>
+    <module>SupermarketReceipt-Refactoring-Kata</module>
   </modules>
 
 </project>
