@@ -53,3 +53,38 @@ to print or send a HTML version of the same receipt. All the data and number for
 the same. However the layout should be html. You don't have to worry about the HTML template - a
 designer will care of that - but we do need someone to keep duplication between the reports to a
 bare minimum.
+
+## Notes during work on solution
+
+## Tests
+
+The first step of Supermarket Receipt Kata needs to look through the statement, the cond and write
+tests which will cover as much of the possible scenarios and code as possible. Doing this will allow
+us to refactor the code afterwards with the assurance that we have the tests to rely on.
+
+Looking through the classes and statements we can observe that it's not that easy to determine the
+flow of the application. I added some notes observed at first glance of strange flows, again at this
+point I am not trying to determine places that need to be refactored, I am just trying to understand
+the code at a level that allows me to write a good suite of unit tests.
+
+- The Teller seems to be the entry point, it holds a SupermarketCatalog and a mapping of offers from
+  each product type. The SupermarketCatalog has to be passed to the Teller instance and the offers
+  can be added afterwards using the addSpecialOffer method.
+- The Teller class also provide the checksOutArticlesFrom, which receives a ShoppingCart as
+  parameter. The main idea here would be probably that the ShoppingCart is per client, but the
+  SupermarketCatalog holds all the possible products available. This method does a lot, it adds to
+  the receipt each product from the shopping cart (Product p, double quantity, double price, double
+  totalPrice) and calls the handleOffers method from the ShoppingCart object, which mutates the
+  receipt parameter. An entire mess in these classes.
+- The ShoppingCart also is quite hard to gasp. We discussed previously that it has a handleOffers
+  method which generates the receipt I would like to say, but it just mutates the received receipt.
+  Besides, that it holds the items as ProductQuantity and map of productQuantities representing each
+  product and the quantity it has. Each time a product is added, a ProductQuantity is added with the
+  product and the number of times it is bought, and at product to quantity mapping is increased,
+  this behavior would mean that it would be allowed to add a product "test" with a quantity of 2 and
+  afterwards add a second time the product "test" with a quantity of 3. The items will held 2
+  entries of the 'test' product with one having quantity 2 and one having quantity 3, but the map
+  holding the total quantities will hold the sum of all quantities, in this example 5.
+- ....
+
+##
